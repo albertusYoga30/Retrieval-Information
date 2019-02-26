@@ -7,7 +7,7 @@ package model;
 
 /**
  *
- * @author admin
+ * @nx
  */
 public class Posting implements Comparable<Posting>{
     private String term;
