@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 /**
  *
- * @author admin
+ * @nx
  */
 public class InvertedIndex {
 

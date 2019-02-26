@@ -14,7 +14,7 @@ import model.Term;
 
 /**
  *
- * @author admin
+ * @nx
  */
 public class testDocument8 {
 
