@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package model;
 
 import java.util.ArrayList;
@@ -15,7 +11,7 @@ import java.util.function.Consumer;
 
 /**
  *
- * @nx
+ * @author admin
  */
 public class InvertedIndex {
 
@@ -28,8 +24,10 @@ public class InvertedIndex {
     public void addNewDocument(Document document) {
         getListOfDocument().add(document);
     }
+    
 
     public ArrayList<Posting> getUnsortedPostingList() {
+        // cek untuk term yang muncul lebih dari 1 kali
         // siapkan posting List
         ArrayList<Posting> list = new ArrayList<Posting>();
         // buat node Posting utk listofdocument
@@ -41,6 +39,7 @@ public class InvertedIndex {
                 // buat object tempPosting
                 Posting tempPosting = new Posting(termResult[j],
                         getListOfDocument().get(i));
+                // cek kemunculan term
                 list.add(tempPosting);
             }
         }
@@ -57,24 +56,90 @@ public class InvertedIndex {
         return list;
     }
 
+    /**
+     * Fungsi cari dokumen
+     *
+     * @param query
+     * @return
+     */
     public ArrayList<Posting> search(String query) {
-        //buat index/dictionary
-        makeDictionary();
-        String tempQuery[]=query.split(" ");
-        ArrayList<ArrayList<Posting>> tempPosting = new ArrayList<>();
+        // buat index/dictionary
+//        makeDictionary();
+        String tempQuery[] = query.split(" ");
+        ArrayList<Posting> result = new ArrayList<Posting>();
         for (int i = 0; i < tempQuery.length; i++) {
-            tempPosting.add(search(tempQuery[i]));
+            String string = tempQuery[i];
+            if (i == 0) {
+                result = searchOneWord(string);
+            } else {
+                ArrayList<Posting> result1 = searchOneWord(string);
+                result = intersection(result, result1);
+            }
         }
-        return intersection(tempPosting.get(0), tempPosting.get(1));
+        return result;
+    }
+
+    /**
+     * Fungsi untuk menggabungkan 2 buah posting Made by Johan
+     *
+     * @param p1
+     * @param p2
+     * @return
+     */
+    public ArrayList<Posting> intersection(ArrayList<Posting> p1,
+            ArrayList<Posting> p2) {
+        if (p1 == null || p2 == null) {
+            return new ArrayList<>();
+        }
+
+        ArrayList<Posting> postings = new ArrayList<>();
+        int p1Index = 0;
+        int p2Index = 0;
+
+        Posting post1 = p1.get(p1Index);
+        Posting post2 = p2.get(p2Index);
+
+        while (true) {
+            if (post1.getDocument().getId() == post2.getDocument().getId()) {
+                try {
+                    postings.add(post1);
+                    p1Index++;
+                    p2Index++;
+                    post1 = p1.get(p1Index);
+                    post2 = p2.get(p2Index);
+                } catch (Exception e) {
+                    break;
+                }
+
+            } else if (post1.getDocument().getId() < post2.getDocument().getId()) {
+                try {
+                    p1Index++;
+                    post1 = p1.get(p1Index);
+                } catch (Exception e) {
+                    break;
+                }
+
+            } else {
+                try {
+                    p2Index++;
+                    post2 = p2.get(p2Index);
+                } catch (Exception e) {
+                    break;
+                }
+            }
+        }
+        return postings;
     }
 
     public ArrayList<Posting> searchOneWord(String word) {
         Term tempTerm = new Term(word);
         if (getDictionary().isEmpty()) {
+            // dictionary kosong
             return null;
         } else {
             int positionTerm = Collections.binarySearch(dictionary, tempTerm);
             if (positionTerm < 0) {
+                // tidak ditemukan
                 return null;
             } else {
                 return dictionary.get(positionTerm).getPostingList();
@@ -83,6 +148,8 @@ public class InvertedIndex {
     }
 
     public void makeDictionary() {
+        // cek deteksi ada term yang frekuensinya lebih dari 
+        // 1 pada sebuah dokumen
         // buat posting list term terurut
         ArrayList<Posting> list = getSortedPostingList();
         // looping buat list of term (dictionary)
@@ -151,64 +218,22 @@ public class InvertedIndex {
     public void setDictionary(ArrayList<Term> dictionary) {
         this.dictionary = dictionary;
     }
-    public ArrayList<Posting> intersection(ArrayList<Posting> p1,
-            ArrayList<Posting> p2){
-        // mengecek p1 atau p2 sama dengan null?
-        if (p1 == null || p2 == null) {
-            // mengembalikan posting p1 atau p2
-            return new ArrayList<>();
-        }
-        // menyiapkan posting tempPosting
-        ArrayList<Posting> tempPostings = new ArrayList<>();
-        // menyiapkan variable p1Index dan p2Index
-        int p1Index = 0;
-        int p2Index = 0;
-        
-        // menyiapkan variable post1 dan post2 bertipe Posting 
-        Posting post1 = p1.get(p1Index);
-        Posting post2 = p2.get(p2Index);
-
-        while (true) {
-            // mengecek id document post1 = id document post2?
-            if (post1.getDocument().getId() == post2.getDocument().getId()) {
-                try {
-                    // menambahkan post1 ke tempPosting
-                    tempPostings.add(post1);
-                    // p1Index dan p2Index bertambah 1
-                    p1Index++;
-                    p2Index++;
-                    
-                    post1 = p1.get(p1Index);
-                    post2 = p2.get(p2Index);
-                } catch (Exception ex) {
-                    // menghentikan program
-                    break;
-                }
-
-            } // mengecek id document post1 < id document post2?
-            else if (post1.getDocument().getId() < post2.getDocument().getId()) {
-                try {
-                    // p1Index bertambah 1
-                    p1Index++;
-                    post1 = p1.get(p1Index);
-                } catch (Exception ex) {
-                    // menghentikan program
-                    break;
-                }
-
-            } 
-            else {
-                try {
-                    // p2Index bertambah 1
-                    p2Index++;
-                    post2 = p2.get(p2Index);
-                } catch (Exception ex) {
-                    // menghentikan program
-                    break;
-                }
-            }
-        }
-        // mengembalikan tempPosting
-        return tempPostings;
+    
+    /**
+     * Fungsi mencari frequensi sebuah term dalam sebuah index
+     * @param term
+     * @return 
+     */
+    public int getDocumentFrequency(String term){
+        return 0;
+    }
+    
+    /**
+     * Fungsi untuk mencari inverse term dari sebuah index
+     * @param term
+     * @return 
+     */
+    public double getInverseDocumentFrequency(String term){
+        return 0.0;
     }
 }
