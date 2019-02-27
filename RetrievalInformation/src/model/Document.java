@@ -6,6 +6,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.StringTokenizer;
 
@@ -65,42 +66,46 @@ public class Document {
     }
 
     public ArrayList<Posting> getListofPosting() {
-        //panggil dungsi getlistOfterm
+        // panggil fungsi getListOfTerm
         String tempString[] = getListofTerm();
-        //buat objek arratlist<posting> result untuk menanmpung
+        // buat objek ArrayList<Posting> result untuk menampung hasil
         ArrayList<Posting> result = new ArrayList<Posting>();
-        //buat looping sebanyak listofterm 
+        // buat looping sebanyak listOfTerm
         for (int i = 0; i < tempString.length; i++) {
-            //di dalam looping
-            //jika term pertama maka
+            // di dalam looping
+            // jika term pertama maka
             if (i == 0) {
-                //buat object termposting
-                Posting temPosting = new Posting(tempString[0], this);
-                //set atribut document
-                //tambah ke arraylist result
+                // buat object tempPosting
+                Posting temPosting = new Posting(tempString[0],this);
+                // set atribut document, gunakan this
+                // tambahkan ke ArrayList result
                 result.add(temPosting);
             } else {
-                //lainnya
-                //sortir arralist result
+                // lainnya
+                // sorting ArayList result
                 Collections.sort(result);
-                //cek apakah term sudah ada 
-                //gunakan fungsi search dengan luaran indeks obyek
-                //gunakan objek temPosting
-                Posting temPosting = new Posting(tempString[i], this);
+                // cek apakah term sudah ada
+                // gunakan fungsi search dengan luaran indeks obyek yang memenuhi
+                // buat object tempPosting           
+                Posting temPosting = new Posting(tempString[i],this);
                 int indexCari = Collections.binarySearch(result,temPosting);
-                //jika hasil kurang dari(obyek tidak ada)
-                if (indexCari < 0) {
-                    //buat objek temposting
-                    //tambahkan ke arraylist result
+                // jika hasil cari kurang dari 0  (obyek tidak ada)
+                if (indexCari <0){
+                    // set atribut document, gunakan this
+                    // tambahkan ke ArrayList result
                     result.add(temPosting);
-                }else{
-                    int tempNumber =result.get(indexCari).getNumberOfTerm();
+                } else{
+                // lainnya   (obyek ada)
+                    // ambil postingnya, 
+                    // tambahkan atribut numberOfTerm dengan 1
+                    // dgn fungsi get
+                    // int tempNumber = get(indekshasilCari).getNumberOfTerm()+1;
+                    int tempNumber = result.get(indexCari).getNumberOfTerm()+1;
+                    // atau get(indekshasilcari.setNumberOfTerm(tempNumber)
+                    result.get(indexCari).setNumberOfTerm(tempNumber);
                 }
             }
-
-            
         }
-
         return result;
     }
 
