@@ -16,13 +16,13 @@ import model.Term;
  *
  * @author admin
  */
-public class testTFIDF5 {
+public class testTFIDF6 {
 
     public static void main(String[] args) {
         // seting dokumen
-        Document doc1 = new Document(2, "Shipment of gold damaged in a fire");
-        Document doc2 = new Document(3, "delivery of silver arrived in a silver truck");
-        Document doc3 = new Document(1, "shipment of gold arrived in a truck");
+        Document doc1 = new Document(1, "Shipment of gold damaged in a fire");
+        Document doc2 = new Document(2, "delivery of silver arrived in a silver truck");
+        Document doc3 = new Document(3, "shipment of gold arrived in a truck");
         
         // buat object invertedIndex
         InvertedIndex index = new InvertedIndex();
@@ -52,8 +52,15 @@ public class testTFIDF5 {
         
         // idf
         String tempString1 = "silver";
-        double result3 = index.getDocumentFrequency(tempString1);
+        double result3 = index.getInverseDocumentFrequency(tempString);
         System.out.println("IDF of "+tempString1+" is "+result3);
+        
+        // tf
+        // idf
+        String tempString2 = "silver";
+        int idDoc=2;
+        int result4 = index.getTermFrequency(tempString2, idDoc);
+        System.out.println("TF of "+tempString2+" in idDoc ="+idDoc+ " is "+result4);
         
     
         

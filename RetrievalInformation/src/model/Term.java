@@ -1,11 +1,15 @@
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package model;
 
 import java.util.ArrayList;
 
 /**
  *
- * @nx
+ * @author admin
  */
 public class Term implements Comparable<Term>{
     private String term;
@@ -15,7 +19,7 @@ public class Term implements Comparable<Term>{
         this.term = term;
     }
 
-    public int getNumberOfTerm(){
+    public int getNumberOfDocument(){
         return postingList.size();
     }
     /**
