@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 /**
  *
- * @author admin
+ * @author Nx
  */
 public class Term implements Comparable<Term>{
     private String term;

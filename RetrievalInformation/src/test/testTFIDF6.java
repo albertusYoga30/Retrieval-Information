@@ -14,7 +14,7 @@ import model.Term;
 
 /**
  *
- * @author admin
+ * @author Nx
  */
 public class testTFIDF6 {
 
@@ -52,15 +52,15 @@ public class testTFIDF6 {
         
         // idf
         String tempString1 = "silver";
-        double result3 = index.getInverseDocumentFrequency(tempString);
+        double result3 = index.getInverseDocumentFrequency(tempString1);
         System.out.println("IDF of "+tempString1+" is "+result3);
         
         // tf
         // idf
-        String tempString2 = "silver";
+        String tempString2 = "truck";
         int idDoc=2;
         int result4 = index.getTermFrequency(tempString2, idDoc);
-        System.out.println("TF of "+tempString2+" in idDoc ="+idDoc+ " is "+result4);
+        System.out.println("TF of "+tempString2+" in idDoc = "+idDoc+ " is "+result4);
         
     
         

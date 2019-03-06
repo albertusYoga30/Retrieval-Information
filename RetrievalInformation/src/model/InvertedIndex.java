@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 /**
  *
- * @author admin
+ * @author Nx
  */
 public class InvertedIndex {
 
@@ -303,16 +303,17 @@ public class InvertedIndex {
      */
     public int getDocumentFrequency(String term) {
         Term tempTerm = new Term(term);
-        //cek apakah ada  di dictionary
+        // cek apakah term ada di dictionary
         int index = Collections.binarySearch(dictionary, tempTerm);
         if (index > 0) {
-            //term ada
-            //ambil arraylist posting dari object term 
-            ArrayList<Posting> tempPosting = dictionary.get(index).getPostingList();
-            //return ukurannya
+            // term ada
+            // ambil ArrayList<Posting> dari object term
+            ArrayList<Posting> tempPosting = dictionary.get(index)
+                    .getPostingList();
+            // return ukuran posting list
             return tempPosting.size();
         } else {
-            //tidak ada
+            // term tidak ada
             return -1;
         }
     }
@@ -325,21 +326,19 @@ public class InvertedIndex {
      */
     public double getInverseDocumentFrequency(String term) {
         Term tempTerm = new Term(term);
-        //cek apakah ada  di dictionary
+        // cek apakah term ada di dictionary
         int index = Collections.binarySearch(dictionary, tempTerm);
         if (index > 0) {
-            //term ada
-            //ambil arraylist posting dari object term 
-            ArrayList<Posting> tempPosting = dictionary.get(index).getPostingList();
-            //return ukurannya
-            //jumlah total dokumen
+            // term ada
+            // jumlah total dokumen
             int N = listOfDocument.size();
-            //jumlah dokumen dengan term i
-            int ni= getDocumentFrequency(term);
-            //idf = log10(N/ni)
-            return Math.log10(N/ni);
+            // jumlah dokumen dengan term i
+            int ni = getDocumentFrequency(term);
+            // idf = log10(N/ni)
+            return Math.log10(N / ni);
         } else {
-            //tidak ada
+            // term tidak ada
+            // nilai idf = 0
             return 0.0;
         }
     }
@@ -352,6 +351,43 @@ public class InvertedIndex {
      * @return
      */
     public int getTermFrequency(String term, int idDocument) {
+        Document document = new Document();
+        document.setId(idDocument);
+        int pos = Collections.binarySearch(listOfDocument, document);
+        if (pos >= 0) {
+            ArrayList<Posting> tempPosting = listOfDocument.get(pos).getListofPosting();
+            Posting posting = new Posting();
+            posting.setTerm(term);
+            int postingIndex = Collections.binarySearch(tempPosting, posting);
+            if (postingIndex >= 0) {
+                return tempPosting.get(postingIndex).getNumberOfTerm();
+            }
+            return 0;
+        }
+
         return 0;
+    }
+
+    /**
+     * Fungsi untuk menghitung TF-IDF dari sebuah dokumen
+     *
+     * @param idDocument
+     */
+    public ArrayList<Posting> makeTFIDF(int idDocument) {
+        ArrayList<Term> terms = getDictionary();
+
+        ArrayList<Posting> result = new ArrayList<>();
+        for (int i = 0; i < terms.size(); i++) {
+            double weight = getTermFrequency(terms.get(i).getTerm(), idDocument) * getInverseDocumentFrequency(terms.get(i).getTerm());
+
+            Posting tempPosting = new Posting();
+            tempPosting.setTerm(terms.get(i).getTerm());
+            tempPosting.setWeight(weight);
+
+            result.add(tempPosting);
+        }
+
+        return result;
+
     }
 }
