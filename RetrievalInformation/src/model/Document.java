@@ -12,7 +12,7 @@ import java.util.StringTokenizer;
 
 /**
  *
- * @author Nx
+ * @author puspaningtyas
  */
 public class Document implements Comparable<Document>{
 
@@ -20,6 +20,10 @@ public class Document implements Comparable<Document>{
     private String content;
 
     public Document() {
+    }
+
+    public Document(int id) {
+        this.id = id;
     }
 
     public Document(String content) {
