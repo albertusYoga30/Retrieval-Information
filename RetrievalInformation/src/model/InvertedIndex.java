@@ -15,7 +15,7 @@ import java.util.function.Consumer;
 
 /**
  *
- * @author admin
+ * @Nx
  */
 public class InvertedIndex {
 
@@ -397,7 +397,7 @@ public class InvertedIndex {
                 // cari tf
                 int tf = result.get(i).getNumberOfTerm();
                 // hitung bobot
-                double bobot = tf*idf;
+                double bobot = tf * idf;
                 // set bobot pada posting
                 result.get(i).setWeight(bobot);
             }
@@ -429,18 +429,18 @@ public class InvertedIndex {
             Posting temp = p1.get(i);
             // cari posting di p2
             boolean found = false;
-            for (int j = 0; j < p2.size() && found==false; j++) {
+            for (int j = 0; j < p2.size() && found == false; j++) {
                 Posting temp1 = p2.get(j);
                 if (temp1.getTerm().equalsIgnoreCase(temp.getTerm())) {
                     //term sama
                     found = true;
                     // kalikan bobot untuk term yang sama
-                    result = result + temp1.getWeight()*temp.getWeight();
-                    
+                    result = result + temp1.getWeight() * temp.getWeight();
+
                 }
-                
+
             }
-            
+
         }
         return result;
     }
@@ -453,25 +453,122 @@ public class InvertedIndex {
      */
     public ArrayList<Posting> getQueryPosting(String query) {
         //buat dokument
-        Document temp = new Document(-1,query);
+        Document temp = new Document(-1, query);
         //buat posting listnya
         ArrayList<Posting> result = temp.getListofPosting();
         // hitung bobot
         for (int i = 0; i < result.size(); i++) {
-                // ambil term
-                String tempTerm = result.get(i).getTerm();
-                // cari idf
-                double idf = getInverseDocumentFrequency(tempTerm);
-                // cari tf
-                int tf = result.get(i).getNumberOfTerm();
-                // hitung bobot
-                double bobot = tf*idf;
-                // set bobot pada posting
-                result.get(i).setWeight(bobot);
-            }
-            Collections.sort(result);
-   
+            // ambil term
+            String tempTerm = result.get(i).getTerm();
+            // cari idf
+            double idf = getInverseDocumentFrequency(tempTerm);
+            // cari tf
+            int tf = result.get(i).getNumberOfTerm();
+            // hitung bobot
+            double bobot = tf * idf;
+            // set bobot pada posting
+            result.get(i).setWeight(bobot);
+        }
+        Collections.sort(result);
+
         return result;
-        
+
     }
+
+    /**
+     * Fungsi untuk menghitung panjang dari sebuah posting
+     *
+     * @param posting
+     * @return
+     */
+    public double getLengthOfPosting(ArrayList<Posting> posting) {
+        // membuat variabel untuk mengambil panjang dokumen
+        double tempPost = 0;
+        // perulangan sebanyak posting
+        for (int i = 0; i < posting.size(); i++) {
+            // melakukan perhitungan dengan rumus setiap weight setiap posting di pangkat 2
+            tempPost += Math.pow(posting.get(i).getWeight(), 2);
+        }
+        return Math.sqrt(tempPost);
+    }
+
+    /**
+     * Fungsi untuk menghitung cosine similarity
+     *
+     * @param posting
+     * @param posting1
+     * @return
+     */
+    public double getCosineSimilarity(ArrayList<Posting> posting,
+            ArrayList<Posting> posting1) {
+        // mengambil nilai InnerProduct dan dimasukan ke variabel baru
+        double ip = getInnerProduct(posting, posting1);
+        // membuat variabel baru untuk melakukan perhitungan cosine similarity
+        double hasil = 0;
+        // melakukan perhitungan cosine similarity
+        hasil = ip / (getLengthOfPosting(posting) * getLengthOfPosting(posting1));
+        return hasil;
+    }
+
+    /**
+     * Fungsi untuk mencari berdasar nilai TFIDF
+     *
+     * @param query
+     * @return
+     */
+    public ArrayList<SearchingResult> searchTFIDF(String query) {
+         // membuat arraylist searching result untuk memasukan hasil dari pencarian
+        ArrayList<SearchingResult> result = new ArrayList<SearchingResult>();
+        // menghitung tfidf untuk kata yg dicari
+        ArrayList<Posting> queryPost = this.getQueryPosting(query);
+        
+        // perulangan sebanyak dokumen
+        for (int i = 1; i <= listOfDocument.size(); i++) {
+            // arraylist untuk menghitung tfidf untuk dokumen
+            ArrayList<Posting> tempDoc = this.makeTFIDF(i);
+            // menghitung innerproduct
+            double innerProduct = this.getInnerProduct(queryPost, tempDoc);
+            // memasukan innerproduct dan dokumen ke searching result
+            SearchingResult doc = new SearchingResult(innerProduct, tempDoc.get(i-1).getDocument());
+            // memasukan data variabel doc ke arraylist result
+            result.add(doc);
+        }
+        // melakukan pengurutan
+        Collections.sort(result);
+        // melakukan pembalikan urutan
+        Collections.reverse(result);
+        return result;
+    }
+
+    /**
+     * Fungsi untuk mencari dokumen berdasarkan cosine similarity
+     *
+     * @param query
+     * @return
+     */
+    public ArrayList<SearchingResult> searchCosineSimilarity(String query) {
+        // membuat arraylist searching result untuk memasukan hasil dari pencarian
+        ArrayList<SearchingResult> result = new ArrayList<SearchingResult>();
+        // menghitung tfidf untuk kata yg dicari
+        ArrayList<Posting> queryPost = this.getQueryPosting(query);
+
+        // perulangan sebanyak dokumen
+        for (int i = 1; i <= listOfDocument.size(); i++) {
+            // arraylist untuk menghitung tfidf untuk dokumen
+            ArrayList<Posting> tempDoc = this.makeTFIDF(i);
+            // menghitung similarity
+            double similarity = this.getCosineSimilarity(queryPost, tempDoc);
+            // memasukan similarity dan dokumen ke searching result
+            SearchingResult doc = new SearchingResult(similarity, tempDoc.get(i - 1).getDocument());
+            // memasukan data variabel doc ke arraylist result
+            result.add(doc);
+        }
+        // melakukan pengurutan
+        Collections.sort(result);
+        // melakukan pembalikan urutan
+        Collections.reverse(result);
+        return result;
+    }
+    
+
 }
