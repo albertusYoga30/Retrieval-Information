@@ -502,11 +502,11 @@ public class InvertedIndex {
     public double getCosineSimilarity(ArrayList<Posting> posting,
             ArrayList<Posting> posting1) {
         // mengambil nilai InnerProduct dan dimasukan ke variabel baru
-        double ip = getInnerProduct(posting, posting1);
+        double jarak = getInnerProduct(posting, posting1);
         // membuat variabel baru untuk melakukan perhitungan cosine similarity
         double hasil = 0;
         // melakukan perhitungan cosine similarity
-        hasil = ip / (getLengthOfPosting(posting) * getLengthOfPosting(posting1));
+        hasil = jarak / Math.sqrt(getLengthOfPosting(posting) * getLengthOfPosting(posting1));
         return hasil;
     }
 
