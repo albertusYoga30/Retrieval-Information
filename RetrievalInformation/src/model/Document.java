@@ -5,6 +5,7 @@
  */
 package model;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,7 +13,7 @@ import java.util.StringTokenizer;
 
 /**
  *
- * @author puspaningtyas
+ * @author Nx
  */
 public class Document implements Comparable<Document>{
 
@@ -118,4 +119,11 @@ public class Document implements Comparable<Document>{
         return id-doc.getId();
     }
 
+    /**
+     * Fungsi untuk membaca sebuah file *.txt dan 
+     * hasil baca dimasukkan ke atribut content
+     */
+    public void readFile(int idDoc, File file){
+        
+    }
 }
