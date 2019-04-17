@@ -6,16 +6,20 @@
 package model;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Scanner;
 import java.util.StringTokenizer;
 
 /**
  *
  * @author Nx
  */
-public class Document implements Comparable<Document>{
+public class Document implements Comparable<Document> {
 
     private int id;
     private String content;
@@ -81,7 +85,7 @@ public class Document implements Comparable<Document>{
             // jika term pertama maka
             if (i == 0) {
                 // buat object tempPosting
-                Posting temPosting = new Posting(tempString[0],this);
+                Posting temPosting = new Posting(tempString[0], this);
                 // set atribut document, gunakan this
                 // tambahkan ke ArrayList result
                 result.add(temPosting);
@@ -92,20 +96,20 @@ public class Document implements Comparable<Document>{
                 // cek apakah term sudah ada
                 // gunakan fungsi search dengan luaran indeks obyek yang memenuhi
                 // buat object tempPosting           
-                Posting temPosting = new Posting(tempString[i],this);
-                int indexCari = Collections.binarySearch(result,temPosting);
+                Posting temPosting = new Posting(tempString[i], this);
+                int indexCari = Collections.binarySearch(result, temPosting);
                 // jika hasil cari kurang dari 0  (obyek tidak ada)
-                if (indexCari <0){
+                if (indexCari < 0) {
                     // set atribut document, gunakan this
                     // tambahkan ke ArrayList result
                     result.add(temPosting);
-                } else{
-                // lainnya   (obyek ada)
+                } else {
+                    // lainnya   (obyek ada)
                     // ambil postingnya, 
                     // tambahkan atribut numberOfTerm dengan 1
                     // dgn fungsi get
                     // int tempNumber = get(indekshasilCari).getNumberOfTerm()+1;
-                    int tempNumber = result.get(indexCari).getNumberOfTerm()+1;
+                    int tempNumber = result.get(indexCari).getNumberOfTerm() + 1;
                     // atau get(indekshasilcari.setNumberOfTerm(tempNumber)
                     result.get(indexCari).setNumberOfTerm(tempNumber);
                 }
@@ -116,14 +120,18 @@ public class Document implements Comparable<Document>{
 
     @Override
     public int compareTo(Document doc) {
-        return id-doc.getId();
+        return id - doc.getId();
     }
 
     /**
-     * Fungsi untuk membaca sebuah file *.txt dan 
-     * hasil baca dimasukkan ke atribut content
+     * Fungsi untuk membaca sebuah file *.txt dan hasil baca dimasukkan ke
+     * atribut content
      */
-    public void readFile(int idDoc, File file){
-        
+    public void readFile(int idDoc, File file) {
+
+// simpan idDoc
+        this.id = idDoc;
+
+        // baca file
     }
 }
