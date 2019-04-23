@@ -145,7 +145,7 @@ public class Document implements Comparable<Document> {
     }
      @Override
     public String toString() {
-        return "Document{" + "id=" + id + ", content=" + content + '}';
+        return "Document{" + "id = " + id + ", content = " + content + '}';
     }
     public void removeStopWord(){
         //asusmi content sudah ada
