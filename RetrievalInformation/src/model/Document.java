@@ -21,6 +21,7 @@ import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.en.PorterStemFilter;
+import org.apache.lucene.analysis.id.IndonesianAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.util.Version;
@@ -33,6 +34,7 @@ public class Document implements Comparable<Document> {
 
     private int id;
     private String content;
+    private String realContent;
 
     public Document() {
     }
@@ -144,17 +146,16 @@ public class Document implements Comparable<Document> {
 
         // baca file
     }
-     @Override
+
+    @Override
     public String toString() {
         return "Document{" + "id = " + id + ", content = " + content + '}';
     }
-    
-        
+
     /**
      * Fungsi untuk menghilangkan kata stop word
      */
-    
-    public void removeStopWord(){
+    public void removeStopWord() {
         //asusmi content sudah ada
         String text = content;
         Version matchVersion = Version.LUCENE_7_7_0; // Substitute desired Lucene version for XY
@@ -183,13 +184,13 @@ public class Document implements Comparable<Document> {
         }
         content = sb.toString();
     }
-    
+
     /**
      * Fungsi untuk menghilangkan stop word dan stemming
      */
-    public void stemming(){
+    public void stemming() {
         String text = content;
-        System.out.println("Text = "+text);
+        System.out.println("Text = " + text);
         Version matchVersion = Version.LUCENE_7_7_0; // Substitute desired Lucene version for XY
         Analyzer analyzer = new StandardAnalyzer();
         analyzer.setVersion(matchVersion);
@@ -212,5 +213,47 @@ public class Document implements Comparable<Document> {
             System.out.println("Exception: " + ex);
         }
         content = sb.toString();
+    }
+
+    /**
+     * @return the realContent
+     */
+    
+    public String getRealContent() {
+        String realContent = null;
+        return realContent;
+    }
+
+    /**
+     * @param realContent the realContent to set
+     */
+    public void setRealContent(String realContent) {
+        this.realContent = realContent;
+    }
+
+    /**
+     * Fungsi untuk mensteming content dalam bahasa indonesia
+     */
+    public void IndonesiaStemming() {
+        String text = content;
+        IndonesianAnalyzer analyzer = new IndonesianAnalyzer();
+        TokenStream tokenStream = analyzer.tokenStream(
+                "myField",
+                new StringReader(text.trim()));
+        tokenStream = new PorterStemFilter(tokenStream);
+        StringBuilder sb = new StringBuilder();
+        CharTermAttribute charTermAttribute = tokenStream.addAttribute(CharTermAttribute.class);
+
+        try {
+            tokenStream.reset();
+            while (tokenStream.incrementToken()) {
+                String term = charTermAttribute.toString();
+                sb.append(term + " ");
+            }
+        } catch (Exception ex) {
+            System.out.println("Exception: " + ex);
+        }
+        content = sb.toString();
+
     }
 }
